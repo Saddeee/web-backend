@@ -18,11 +18,20 @@ let notes = [
     important: true,
   },
 ];
+
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 app.use(express.static("dist"))
-
+app.use(requestLogger)
 
 const generateId=()=>{
   const maxId = notes.length > 0 ? Math.max(notes.map((n) => n.id)) : 0;
@@ -66,6 +75,18 @@ app.get("/api/notes/:id", (request, response) => {
     response.status(404).end();
   }
 });
+
+app.put("/api/notes/:id", (req, res)=>{
+  const id = Number(req.params.id)
+  const updateBody = req.body
+  const find = notes.find((note)=>note.id === id)
+  if(notes[id]){
+    notes[id] = updateBody
+    res.json({"Succes":"worked"})
+  }else{
+    res.status(404).end();
+  }
+})
 
 app.delete("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
