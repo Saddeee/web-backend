@@ -17,7 +17,7 @@ const requestLogger = (request, response, next) => {
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
-app.use(express.static("dist"))
+app.use(express.static("dist1"))
 app.use(requestLogger)
 
 const generateId=()=>{
@@ -44,9 +44,6 @@ app.post("/api/notes", (request, response) => {
   response.json(note);
 });
 
-app.get("/", (request, response) => {
-  response.end("<h1>Hello World</h1>");
-});
 
 app.get("/api/notes", (request, response) => {
   Note.find({}).then((notes)=>{
