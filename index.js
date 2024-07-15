@@ -30,12 +30,11 @@ const requestLogger = (request, response, next) => {
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
-app.use(express.static("dist"))
+app.use(express.static("dist1"))
 app.use(requestLogger)
 
 const generateId=()=>{
-  const maxId = notes.length > 0 ? Math.max(notes.map((n) => n.id)) : 0;
-  const note = request.body;
+  const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
   return maxId+1
 }
 
@@ -48,7 +47,7 @@ app.post("/api/notes", (request, response) => {
   }
   const note={
     content: body.content,
-    important: Boolean(body.important) || false,
+    important: Boolean(body.important),
     id: generateId()
   }
 
@@ -78,11 +77,15 @@ app.get("/api/notes/:id", (request, response) => {
 
 app.put("/api/notes/:id", (req, res)=>{
   const id = Number(req.params.id)
-  const updateBody = req.body
-  const find = notes.find((note)=>note.id === id)
-  if(notes[id]){
-    notes[id] = updateBody
-    res.json({"Succes":"worked"})
+  body = req.body
+  const noteIndex = notes.findIndex(note => note.id === id);
+  if(noteIndex !== -1){
+    notes[noteIndex]= {
+      id:id,
+      content: body.content,
+      important: body.important
+    }
+    res.json(notes[noteIndex]);
   }else{
     res.status(404).end();
   }
@@ -91,7 +94,7 @@ app.put("/api/notes/:id", (req, res)=>{
 app.delete("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
   notes = notes.filter((note) => {
-    note.id !== id;
+    return note.id !== id;
   });
   response.status(204).end();
 });
