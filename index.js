@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require("express");
 const app = express();
 const Note = require("./modules/note")
-app.use(express.static("dist"))
+app.use(express.static("dist1"))
 
 
 const requestLogger = (request, response, next) => {
